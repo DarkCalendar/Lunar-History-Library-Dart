@@ -1,6 +1,16 @@
 class LunarDate {
+  // Method now([String mode = '']) getting now arabic calendar
+  dynamic now([String mod = '']) {
+    DateTime date = DateTime.now();
+    dynamic gY = date.year.toInt();
+    dynamic gM = date.month.toInt();
+    dynamic gD = date.day.toInt();
+    return gregorianToLunar(gY, gM, gD, mod);
+  }
+
+  // Converting Lunar date (Calendar) to Gregorian Calendar with 4 parametr's
   dynamic lunarToGregorian(int lY, int lM, int lD, [String mod = '']) {
-    List<int> MonthDaysLunar = [
+    List<int> monthDaysLunar = [
       0,
       30,
       29,
@@ -15,7 +25,7 @@ class LunarDate {
       30,
       29 + (isLeapYearL(lY) ? 1 : 0),
     ];
-    if (MonthDaysLunar[lM] < lD || lM > 12) return false;
+    if (monthDaysLunar[lM] < lD || lM > 12) return false;
     dynamic Leap = (isLeapYearL(lY) == true) ? 1 : 0;
     dynamic jd = ((11 * lY + 3) / 30).floor() +
         354 * lY +
@@ -61,9 +71,11 @@ class LunarDate {
     }
   }
 
+  // Converting Gregorian date (Calendar) to Lunar Calendar with 4 parametr's
   dynamic gregorianToLunar(int gY, int gM, int gD, [String mod = '']) {
     // List<String> dateParts = timestamp.toString().split(' ');
 
+    // Pars Date Calendar
     DateTime dateTime = DateTime.parse(
         '${gY.toString().padLeft(4, '0')}-${gM.toString().padLeft(2, '0')}-${gD.toString().padLeft(2, '0')}');
     List<String> dateParts = dateTime.toString().split(' ');
@@ -74,6 +86,7 @@ class LunarDate {
     int y = int.parse(dateNumbers[0]);
 
     late int jd;
+    // Validating Year Month and day
     if ((y > 1582) ||
         ((y == 1582) && (m > 10)) ||
         ((y == 1582) && (m == 10) && (d > 14))) {
@@ -89,6 +102,7 @@ class LunarDate {
           d +
           1729777;
     }
+    // Calculated Calendar
     int l = jd - 1948440 + 10632;
     int n = ardInt((l - 1) ~/ 10631);
     l = l - 10631 * n + 355; // Correction: 355 instead of 354
@@ -109,15 +123,20 @@ class LunarDate {
     }
   }
 
+  /// Configure for getting gregorianToLunar Date method.
   int ardInt(dynamic float) => (float < -0.0000001)
       ? (float - 0.0000001).ceil()
       : (float + 0.0000001).floor();
 
+  // Check Leap Gregorian
   bool isLeapYearG(int year) {
+    // Checking
     return (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
   }
 
+  // Check Leap Lunar
   bool isLeapYearL(int year) {
+    // Checking
     return [2, 5, 7, 10, 13, 16, 18, 21, 24, 26, 29].contains(year % 30);
   }
 }

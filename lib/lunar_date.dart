@@ -1,3 +1,4 @@
 library lunar_date;
 
-export 'src/Date.dart';
+// Getting Class
+export 'src/date.dart';
