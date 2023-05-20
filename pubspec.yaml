@@ -1,6 +1,6 @@
 name: lunar_date
 description: Lunar Arabian calendar package
-version: 1.0.1
+version: 1.1.0
 homepage: https://github.com/DarkCalendar/Lunar-History-Library-Dart
 
 environment:
