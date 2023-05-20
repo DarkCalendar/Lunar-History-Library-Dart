@@ -1,4 +1,66 @@
 class LunarDate {
+  dynamic lunarToGregorian(int lY, int lM, int lD, [String mod = '']) {
+    List<int> MonthDaysLunar = [
+      0,
+      30,
+      29,
+      30,
+      29,
+      30,
+      29,
+      30,
+      29,
+      30,
+      29,
+      30,
+      29 + (isLeapYearL(lY) ? 1 : 0),
+    ];
+    if (MonthDaysLunar[lM] < lD || lM > 12) return false;
+    dynamic Leap = (isLeapYearL(lY) == true) ? 1 : 0;
+    dynamic jd = ((11 * lY + 3) / 30).floor() +
+        354 * lY +
+        30 * lM -
+        ((lM - 1) / 2).floor() +
+        lD +
+        1948440 -
+        385 +
+        Leap;
+    if (jd > 2299160) {
+      dynamic l = jd + 68569;
+      dynamic n = ((4 * l) / 146097).floor();
+      // l -= Math.round((146097 * n + 3) / 4);
+      l -= ((146097 * n + 3) / 4).round();
+      dynamic i = ((4000 * (l + 1)) / 1461001).floor();
+      l -= ((1461 * i) / 4).floor() - 31;
+      dynamic j = ((80 * l) / 2447).floor();
+      dynamic D = l - ((2447 * j) / 80).floor();
+      l = (j / 11).floor();
+      dynamic M = j + 2 - 12 * l;
+      dynamic Y = 100 * (n - 49) + i + l;
+      if (mod.isEmpty) {
+        return [Y, M, D];
+      } else {
+        return [Y, M, D].join(mod);
+      }
+    } else {
+      dynamic j = jd + 1402;
+      dynamic k = ((j - 1) / 1461).floor();
+      dynamic l = j - 1461 * k;
+      dynamic n = ((l - 1) / 365).floor() - (l / 1461).floor();
+      dynamic i = l - 365 * n + 29;
+      j = ((80 * i) / 2447).floor();
+      dynamic D = i - ((2447 * j) / 80).floor();
+      i = (j / 11).floor();
+      dynamic Y = 4 * k + n + i - 4716;
+      dynamic M = j + 2 - 12 * i;
+      if (mod.isEmpty) {
+        return [Y, M, D];
+      } else {
+        return [Y, M, D].join(mod);
+      }
+    }
+  }
+
   dynamic gregorianToLunar(int gY, int gM, int gD, [String mod = '']) {
     // List<String> dateParts = timestamp.toString().split(' ');
 
@@ -50,8 +112,12 @@ class LunarDate {
   int ardInt(dynamic float) => (float < -0.0000001)
       ? (float - 0.0000001).ceil()
       : (float + 0.0000001).floor();
-}
 
-void main() {
-  print(LunarDate().gregorianToLunar(2023, 05, 14));
+  bool isLeapYearG(int year) {
+    return (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
+  }
+
+  bool isLeapYearL(int year) {
+    return [2, 5, 7, 10, 13, 16, 18, 21, 24, 26, 29].contains(year % 30);
+  }
 }
